@@ -1,0 +1,74 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "spacex",
+      "intents": [
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "NextFlight",
+          "slots": [],
+          "samples": [
+            "will launch",
+            "next launch",
+            "next",
+            "upcoming"
+          ]
+        },
+        {
+          "name": "LastFlight",
+          "slots": [],
+          "samples": [
+            "launched",
+            "last launch",
+            "latest launch",
+            "last"
+          ]
+        },
+        {
+          "name": "FlightNumber",
+          "slots": [
+            {
+              "name": "number",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            " {number} flight",
+            "what's the {number} flight",
+            "information about {number} flight"
+          ]
+        },
+        {
+          "name": "factSpaceX",
+          "slots": [],
+          "samples": [
+            "facts",
+            "tell me a fact",
+            "fact",
+            "random fact"
+          ]
+        }
+      ],
+      "types": []
+    }
+  }
+}

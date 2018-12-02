@@ -1,0 +1,32 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "it-IT": {
+          "name": "Lanci Space X"
+        },
+        "en-US": {
+          "name": "Lanci Space X"
+        }
+      }
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "aws-serverless-repository-alexaskillskitnodejsfact-JE48FN4EG6NN",
+          "sourceDir": "lambda/eu-west-1_aws-serverless-repository-alexaskillskitnodejsfact-JE48FN4EG6NN"
+        },
+        "interfaces": [],
+        "regions": {
+          "EU": {
+            "endpoint": {
+              "uri": "aws-serverless-repository-alexaskillskitnodejsfact-JE48FN4EG6NN",
+              "sourceDir": "lambda/eu-west-1_aws-serverless-repository-alexaskillskitnodejsfact-JE48FN4EG6NN"
+            }
+          }
+        }
+      }
+    },
+    "manifestVersion": "1.0"
+  }
+}
