@@ -17,11 +17,48 @@ const NextFlightHandler = {
     
     const response = await httpGet(0);
     
+    var responseBuilder = handlerInput.responseBuilder;
+    
+    var responseText = response.details;
+      if (responseText == null){
+        console.log("Entrato");
+        responseText = response.mission_name + "does not have any details available, try again later"
+      }
+    if (supportsDisplay(handlerInput)) {
+      var links = response.links.flickr_images[1];
+      console.log(links);
+      if (links == undefined){
+        var links = "https://c1.staticflickr.com/5/4711/40126461411_aabc643fd8_b.jpg";
+      }
+      const bgImage = new Alexa.ImageHelper()
+        .addImageInstance(links)
+        .getImage();
+      const title = "Title"; //getCardTitle(selectedState);
+      const bodyTemplate = "BodyTemplate1"; //bodyTemplateChoice(getCardTitle(selectedState));
+      const primaryText = new Alexa.RichTextContentHelper()
+        .withPrimaryText(responseText)//;getTextDescription(selectedState, '<br/>'))
+        .getTextContent();
+      
+      handlerInput.responseBuilder.addRenderTemplateDirective({
+        type: 'BodyTemplate1',
+        token: 'string',
+        backButton: 'HIDDEN',
+        backgroundImage: bgImage,
+        title: "Last Flight",
+        textContent: primaryText,
+      });
+      console.log("TRUE");
+      //speechOutput = `This is the ${getBodyTemplateName(bodyTemplate)} template, also known as body template number ${getBodyTemplateNumber(bodyTemplate)}. `;
+    }else{
+      console.log("FALSE");
+    }
+    
     console.log(response);
   
-    return handlerInput.responseBuilder
-      .speak(response.details)
+    return responseBuilder
+      .speak(responseText)
       .getResponse();
+      
   },
 };
 
@@ -33,14 +70,44 @@ const LastFlightHandler = {
   },
   async handle(handlerInput) {
     //const speechOutput = "hello " + handlerInput.requestEnvelope.request.intent.slots.name.value;
+    const response = await httpGet(1);
     
-    const response = await httpGet();
+    var responseBuilder = handlerInput.responseBuilder;
+    var links = response.links.flickr_images[Math.floor(Math.random() * response.links.flickr_images.length)];
+      console.log(links);
+      if (links == undefined){
+        var links = "https://c1.staticflickr.com/5/4711/40126461411_aabc643fd8_b.jpg";
+      }
+    if (supportsDisplay(handlerInput)) {
+      const bgImage = new Alexa.ImageHelper()
+        .addImageInstance(links)
+        .getImage();
+      const title = "Title"; //getCardTitle(selectedState);
+      const bodyTemplate = "BodyTemplate1"; //bodyTemplateChoice(getCardTitle(selectedState));
+      const primaryText = new Alexa.RichTextContentHelper()
+        .withPrimaryText(response.details)//;getTextDescription(selectedState, '<br/>'))
+        .getTextContent();
+      
+      handlerInput.responseBuilder.addRenderTemplateDirective({
+        type: 'BodyTemplate1',
+        token: 'string',
+        backButton: 'HIDDEN',
+        backgroundImage: bgImage,
+        title: "Last Flight",
+        textContent: primaryText,
+      });
+      console.log("TRUE");
+      //speechOutput = `This is the ${getBodyTemplateName(bodyTemplate)} template, also known as body template number ${getBodyTemplateNumber(bodyTemplate)}. `;
+    }else{
+      console.log("FALSE");
+    }
     
     console.log(response);
   
-    return handlerInput.responseBuilder
+    return responseBuilder
       .speak(response.details)
       .getResponse();
+      
   },
 };
 
@@ -71,16 +138,42 @@ const NumberFlightHandler = {
 
 const FactHandler = {
   canHandle(handlerInput) {
+    
     const request = handlerInput.requestEnvelope.request;
     return (request.type === 'IntentRequest'
         && request.intent.name === 'factSpaceX');
   },
   async handle(handlerInput) {
     const response = await httpGetfact();
-    console.log(response[Math.floor(Math.random() * response.length)].details);
+    const fatto = response[Math.floor(Math.random() * response.length)].details;
+    var responseBuilder = handlerInput.responseBuilder;
+    if (supportsDisplay(handlerInput)) {
+      const bgImage = new Alexa.ImageHelper()
+        .addImageInstance("https://c1.staticflickr.com/5/4711/40126461411_aabc643fd8_b.jpg")
+        .getImage();
+      const title = "Title"; //getCardTitle(selectedState);
+      const bodyTemplate = "BodyTemplate1"; //bodyTemplateChoice(getCardTitle(selectedState));
+      const primaryText = new Alexa.RichTextContentHelper()
+        .withPrimaryText(fatto)//;getTextDescription(selectedState, '<br/>'))
+        .getTextContent();
+      
+      handlerInput.responseBuilder.addRenderTemplateDirective({
+        type: 'BodyTemplate1',
+        token: 'string',
+        backButton: 'HIDDEN',
+        backgroundImage: bgImage,
+        title: "Fact",
+        textContent: primaryText,
+      });
+      console.log("TRUE");
+      //speechOutput = `This is the ${getBodyTemplateName(bodyTemplate)} template, also known as body template number ${getBodyTemplateNumber(bodyTemplate)}. `;
+    }else{
+      console.log("FALSE");
+    }
+    //console.log(response[Math.floor(Math.random() * response.length)].details);
     
-    return handlerInput.responseBuilder
-      .speak(response[Math.floor(Math.random() * response.length)].details)
+    return responseBuilder
+      .speak(fatto)
       .getResponse();
   },
 };
@@ -162,44 +255,62 @@ function httpGetfact(which) {
 
 
 
+function supportsDisplay(handlerInput) {
+  const hasDisplay =
+    handlerInput.requestEnvelope.context &&
+    handlerInput.requestEnvelope.context.System &&
+    handlerInput.requestEnvelope.context.System.device &&
+    handlerInput.requestEnvelope.context.System.device.supportedInterfaces &&
+    handlerInput.requestEnvelope.context.System.device.supportedInterfaces.Display;
+  return hasDisplay;
+}
 
 
 
 
-
-const GetNewFactHandler = {
+const LaunchHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
-    return request.type === 'LaunchRequest'
-      || (request.type === 'IntentRequest'
-        && request.intent.name === 'factSpaceX');
+    return request.type === 'LaunchRequest' || request.type === 'AMAZON.FallbackIntent';
   },
   handle(handlerInput) {
-    const factArr = data;
-    const factIndex = Math.floor(Math.random() * factArr.length);
-    const randomFact = factArr[factIndex];
-    const speechOutput = GET_FACT_MESSAGE + randomFact;
-
-    return handlerInput.responseBuilder
-      .speak(speechOutput)
-      .withSimpleCard(SKILL_NAME, randomFact)
+    
+    var responseBuilder = handlerInput.responseBuilder;
+    
+    if (supportsDisplay(handlerInput)) {
+      const bgImage = new Alexa.ImageHelper()
+        .addImageInstance("https://c1.staticflickr.com/5/4711/40126461411_aabc643fd8_b.jpg")
+        .getImage();
+      const title = "Title"; //getCardTitle(selectedState);
+      const bodyTemplate = "BodyTemplate1"; //bodyTemplateChoice(getCardTitle(selectedState));
+      const primaryText = new Alexa.RichTextContentHelper()
+        .withPrimaryText("What you want to know?")//;getTextDescription(selectedState, '<br/>'))
+        .getTextContent();
+      
+      handlerInput.responseBuilder.addRenderTemplateDirective({
+        type: 'BodyTemplate1',
+        token: 'string',
+        backButton: 'HIDDEN',
+        backgroundImage: bgImage,
+        title: "Welcome to SpaceX launches",
+        textContent: primaryText,
+      });
+      console.log("TRUE");
+      //speechOutput = `This is the ${getBodyTemplateName(bodyTemplate)} template, also known as body template number ${getBodyTemplateNumber(bodyTemplate)}. `;
+    }else{
+      console.log("FALSE");
+    }
+    
+    
+    
+    return responseBuilder
+    .speak("Welcome to SpaceX launches, ask me what's the next or the last launch, or a random fact")
+      .reprompt("What you want to know?")
       .getResponse();
   },
 };
 
-const HelpHandler = {
-  canHandle(handlerInput) {
-    const request = handlerInput.requestEnvelope.request;
-    return request.type === 'IntentRequest'
-      && request.intent.name === 'AMAZON.HelpIntent';
-  },
-  handle(handlerInput) {
-    return handlerInput.responseBuilder
-      .speak(HELP_MESSAGE)
-      .reprompt(HELP_REPROMPT)
-      .getResponse();
-  },
-};
+
 
 const ExitHandler = {
   canHandle(handlerInput) {
@@ -241,10 +352,77 @@ const ErrorHandler = {
   },
 };
 
+const FALLBACK_MESSAGE = "Welcome to SpaceX launches, ask me what's the next or the last launch, or a random fact";
+const FALLBACK_REPROMPT = 'What can I help you with?';
+
+const FallbackHandler = {
+  // 2018-May-01: AMAZON.FallbackIntent is only currently available in en-US locale.
+  //              This handler will not be triggered except in that locale, so it can be
+  //              safely deployed for any locale.
+  canHandle(handlerInput) {
+    
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest'
+      && request.intent.name === 'AMAZON.FallbackIntent';
+  },
+  
+  
+  handle(handlerInput) {
+    
+    var responseBuilder = handlerInput.responseBuilder;
+      
+      if (supportsDisplay(handlerInput)) {
+        const bgImage = new Alexa.ImageHelper()
+          .addImageInstance("https://c1.staticflickr.com/5/4711/40126461411_aabc643fd8_b.jpg")
+          .getImage();
+        const title = "Title"; //getCardTitle(selectedState);
+        const bodyTemplate = "BodyTemplate1"; //bodyTemplateChoice(getCardTitle(selectedState));
+        const primaryText = new Alexa.RichTextContentHelper()
+          .withPrimaryText("What you want to know?")//;getTextDescription(selectedState, '<br/>'))
+          .getTextContent();
+        
+        handlerInput.responseBuilder.addRenderTemplateDirective({
+          type: 'BodyTemplate1',
+          token: 'string',
+          backButton: 'HIDDEN',
+          backgroundImage: bgImage,
+          title: "Welcome to SpaceX launches",
+          textContent: primaryText,
+        });
+        console.log("TRUE");
+        //speechOutput = `This is the ${getBodyTemplateName(bodyTemplate)} template, also known as body template number ${getBodyTemplateNumber(bodyTemplate)}. `;
+      }else{
+        console.log("FALSE");
+      }
+      
+    return responseBuilder
+      .speak(FALLBACK_MESSAGE)
+      .reprompt(FALLBACK_REPROMPT)
+      .getResponse();
+  },
+};
+
+const HELP_MESSAGE = 'You can say tell me the next or the last launch, or a random fact, or, you can say exit... What can I help you with?';
+const HELP_REPROMPT = 'What can I help you with?';
+
+const HelpHandler = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest'
+      && request.intent.name === 'AMAZON.HelpIntent';
+  },
+  handle(handlerInput) {
+    return handlerInput.responseBuilder
+      .speak(HELP_MESSAGE)
+      .reprompt(HELP_REPROMPT)
+      .getResponse();
+  },
+};
+
+
+
 const SKILL_NAME = 'spacex launches';
 const GET_FACT_MESSAGE = 'Here\'s your fact: ';
-const HELP_MESSAGE = 'You can say tell me a space fact, or, you can say exit... What can I help you with?';
-const HELP_REPROMPT = 'What can I help you with?';
 const STOP_MESSAGE = 'Goodbye!';
 
 const data = [
@@ -255,13 +433,14 @@ const skillBuilder = Alexa.SkillBuilders.standard();
 
 exports.handler = skillBuilder
   .addRequestHandlers(
+    LaunchHandler,
     FactHandler,
     NumberFlightHandler,
     LastFlightHandler,
     NextFlightHandler,
-    GetNewFactHandler,
     HelpHandler,
     ExitHandler,
+    FallbackHandler,
     SessionEndedRequestHandler
   )
   .addErrorHandlers(ErrorHandler)
